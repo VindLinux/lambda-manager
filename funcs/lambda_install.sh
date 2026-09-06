@@ -17,7 +17,7 @@ _lambda_run_section()
             return 1
         fi
     done <<EOF
-$(jq -r ".${_lrs_section}[]" "$_lrs_package_file")
+$(jq -r "(.${_lrs_section} // [])[]" "$_lrs_package_file")
 EOF
 
     return 0
@@ -187,6 +187,14 @@ lambda_install_chain()
     echo "lambda: installing $_li_package..."
     if ! _lambda_run_section "$_li_package_file" install "$_li_workdir"; then
         echo "lambda: install failed for $_li_package, aborting."
+        rm -rf "$_li_staging"
+        trap - INT TERM
+        return 1
+    fi
+
+    echo "lambda: stripping $_li_package..."
+    if ! _lambda_run_section "$_li_package_file" strip "$_li_workdir"; then
+        echo "lambda: strip failed for $_li_package, aborting."
         rm -rf "$_li_staging"
         trap - INT TERM
         return 1
