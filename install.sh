@@ -32,6 +32,9 @@ lambda_installer()
     echo "Installing funcs/lambda_mutate.sh to /usr/lib/lambda/ ..."
     install -m 644 funcs/lambda_mutate.sh /usr/lib/lambda/lambda_mutate.sh || return 1
 
+    echo "Installing funcs/lambda_sync.sh to /usr/lib/lambda/ ..."
+    install -m 644 funcs/lambda_sync.sh /usr/lib/lambda/lambda_sync.sh || return 1
+
     echo "Creating /usr/share/lambda/installed/ ..."
     mkdir -pv /usr/share/lambda/installed/ || return 1
 

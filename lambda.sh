@@ -2,6 +2,7 @@
 
 . /usr/lib/lambda/lambda_reconcile.sh
 . /usr/lib/lambda/lambda_mutate.sh
+. /usr/lib/lambda/lambda_sync.sh
 
 usage()
 {
@@ -11,6 +12,9 @@ usage()
     echo "Commands:"
     echo "  mutate <append|purge> <package>"
     echo "      Modify the desired system state."
+    echo ""
+    echo "  sync"
+    echo "      Sync local packages with the GitHub repository."
     echo ""
     echo "  reconcile"
     echo "      Reconcile the system with the desired state."
@@ -33,6 +37,9 @@ elif [ "$1" = "reconcile" ]; then
 elif [ "$1" = "mutate" ]; then
     shift
     lambda_mutate "$@"
+    exit $?
+elif [ "$1" == "sync" ]; then
+    lambda_sync
     exit $?
 else
     usage
