@@ -38,7 +38,7 @@ lambda_sync()
     trap 'rm -rf "$_ls_staging"' INT TERM
 
     echo "lambda: fetching recipes..."
-    if ! git clone --depth 1 https://github.com/VindLinux/packages "$_ls_staging/packages" >/dev/null 2>&1; then
+    if ! git clone --depth 1 https://github.com/VindLinux/packages "$_ls_staging/packages"; then
         echo "lambda: failed to clone recipes repository."
         rm -rf "$_ls_staging"
         trap - INT TERM
