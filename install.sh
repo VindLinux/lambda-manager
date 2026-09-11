@@ -2,6 +2,8 @@
 
 lambda_installer()
 {
+    cd "$(dirname "$0")" || return 1
+
     echo "Creating /etc/lambda/ ..."
     mkdir -pv /etc/lambda/ || return 1
 
