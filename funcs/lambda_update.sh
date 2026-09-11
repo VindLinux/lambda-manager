@@ -15,8 +15,7 @@ lambda_update()
         return 1
     fi
 
-    echo "Do you want to update Lambda?"
-    printf "This will update Lambda and its functions, but will not modify your packages, system.json, make.conf or state.json. [y/N]"
+    printf "Do you want to proceed to update? This will update Lambda and its functions, but will not modify your packages, system.json, make.conf or state.json. [y/N] "
 
     read -r _lu_answer
 
