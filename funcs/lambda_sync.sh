@@ -15,7 +15,8 @@ lambda_sync()
         return 1
     fi
 
-    printf "Do you want to continue to sync? This will overwrite the default repository recipes in /usr/share/lambda/packages (manual patches on your own custom recipes are not touched). Proceed? [y/N] "
+    echo "Do you want to continue to sync?"
+    printf "This will overwrite the default repository recipes in /usr/share/lambda/packages (manual patches on your own custom recipes are not touched). Proceed? [y/N] "
     read -r _ls_answer
 
     case "$_ls_answer" in
