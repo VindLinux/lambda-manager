@@ -5,35 +5,37 @@ lambda_installer()
     echo "Creating /etc/lambda/ ..."
     mkdir -pv /etc/lambda/ || return 1
 
-    echo "Installing config/system.json to /etc/lambda/ ..."
-    install -m 644 config/system.json /etc/lambda/system.json || return 1
+    if [ ! -e /etc/lambda/system.json ]; then
+        echo "Installing config/system.json to /etc/lambda/ ..."
+        install -m 644 config/system.json /etc/lambda/system.json || return 1
+    else
+        echo "Keeping existing /etc/lambda/system.json"
+    fi
 
-    echo "Installing config/make.conf to /etc/lambda/ ..."
-    install -m 644 config/make.conf /etc/lambda/make.conf || return 1
+    if [ ! -e /etc/lambda/make.conf ]; then
+        echo "Installing config/make.conf to /etc/lambda/ ..."
+        install -m 644 config/make.conf /etc/lambda/make.conf || return 1
+    else
+        echo "Keeping existing /etc/lambda/make.conf"
+    fi
 
     echo "Creating /var/lib/lambda/ ..."
     mkdir -pv /var/lib/lambda/ || return 1
 
-    echo "Installing config/state.json to /var/lib/lambda/ ..."
-    install -m 644 config/state.json /var/lib/lambda/state.json || return 1
+    if [ ! -e /var/lib/lambda/state.json ]; then
+        echo "Installing config/state.json to /var/lib/lambda/ ..."
+        install -m 644 config/state.json /var/lib/lambda/state.json || return 1
+    else
+        echo "Keeping existing /var/lib/lambda/state.json"
+    fi
 
     echo "Creating /usr/lib/lambda/ ..."
     mkdir -pv /usr/lib/lambda/ || return 1
 
-    echo "Installing funcs/lambda_reconcile.sh to /usr/lib/lambda/ ..."
-    install -m 644 funcs/lambda_reconcile.sh /usr/lib/lambda/lambda_reconcile.sh || return 1
-
-    echo "Installing funcs/lambda_install.sh to /usr/lib/lambda/ ..."
-    install -m 644 funcs/lambda_install.sh /usr/lib/lambda/lambda_install.sh || return 1
-
-    echo "Installing funcs/lambda_remove.sh to /usr/lib/lambda/ ..."
-    install -m 644 funcs/lambda_remove.sh /usr/lib/lambda/lambda_remove.sh || return 1
-
-    echo "Installing funcs/lambda_mutate.sh to /usr/lib/lambda/ ..."
-    install -m 644 funcs/lambda_mutate.sh /usr/lib/lambda/lambda_mutate.sh || return 1
-
-    echo "Installing funcs/lambda_sync.sh to /usr/lib/lambda/ ..."
-    install -m 644 funcs/lambda_sync.sh /usr/lib/lambda/lambda_sync.sh || return 1
+    echo "Installing lambda functions..."
+    for func in funcs/lambda_*.sh; do
+        install -m 644 "$func" /usr/lib/lambda/ || return 1
+    done
 
     echo "Creating /usr/share/lambda/installed/ ..."
     mkdir -pv /usr/share/lambda/installed/ || return 1
