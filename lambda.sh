@@ -1,54 +1,106 @@
 #!/bin/sh
 
-. /usr/lib/lambda/lambda_reconcile.sh
-. /usr/lib/lambda/lambda_mutate.sh
-. /usr/lib/lambda/lambda_sync.sh
-. /usr/lib/lambda/lambda_update.sh
+. /usr/lib/lambda/lib.sh
+. /usr/lib/lambda/install.sh
+. /usr/lib/lambda/remove.sh
+. /usr/lib/lambda/mutate.sh
+. /usr/lib/lambda/deps.sh
+. /usr/lib/lambda/orphan.sh
+. /usr/lib/lambda/reconcile.sh
+. /usr/lib/lambda/sync.sh
+. /usr/lib/lambda/update.sh
+. /usr/lib/lambda/info.sh
 
-usage()
+help()
 {
-    echo "Usage: lambda <command> [arguments]..."
-    echo "Minimalist declarative package manager"
-    echo ""
+    echo "Lambda - package manager for Vind Linux"
+    echo
+    echo "Usage:"
+    echo "    lambda <command> [options] [arguments]"
+    echo
     echo "Commands:"
-    echo "  mutate <append|purge> <package>"
-    echo "      Modify the desired system state."
+    echo "    mutate append <package>    Add a package to the desired system"
+    echo "    mutate purge <package>     Remove a package from the desired system"
+    echo
+    echo "    deps <package>             Show the dependency tree and the install order"
+    echo "    info <package>             Show package information"
+    echo
+    echo "    reconcile                  Reconcile the installed system with the desired system"
+    echo "    orphan                     Find and remove orphaned dependencies"
+    echo "    sync [--soft]              Synchronize local package recipes with the repository"
+    echo "                               --soft:  only adds recipes that don't exist locally."
     echo ""
-    echo "  sync"
-    echo "      Sync local packages from the upstream repository."
-    echo ""
-    echo "  update"
-    echo "      Update lambda from the upstream repository."
-    echo ""
-    echo "  reconcile"
-    echo "      Reconcile the system with the desired state."
-    echo ""
-    echo "  --help"
-    echo "      Display this help message."
+    echo "    update                     Update Lambda itself"
+    echo
+    echo "Options:"
+    echo "    -h, --help                 Show this help message"
+    echo "    -v, --version              Show Lambda version"
+    echo
+    echo "Examples:"
+    echo "    lambda mutate append vim"
+    echo "    lambda mutate purge nano"
+    echo
+    echo "    lambda deps vim"
+    echo "    lambda info vim"
+    echo
+    echo "    lambda reconcile"
+    echo "    lambda orphan"
+    echo "    lambda sync"
+    echo "    lambda sync --soft"
+    echo "    lambda update"
 }
 
 if [ "$#" -eq 0 ]; then
-    usage
+    help
     exit 1
 fi
 
-if [ "$1" = "--help" ]; then
-    usage
-    exit 0
-elif [ "$1" = "reconcile" ]; then
-    lambda_reconcile
-    exit $?
-elif [ "$1" = "mutate" ]; then
-    shift
-    lambda_mutate "$@"
-    exit $?
-elif [ "$1" == "sync" ]; then
-    lambda_sync
-    exit $?
-elif [ "$1" == "update" ]; then
-    lambda_update
-    exit $?
-else
-    usage
-    exit 0
-fi
+case "$1" in
+    -h|--help)
+        help
+        exit 0
+        ;;
+    -v|--version)
+        echo "lambda-manager v1.0"
+        exit 0
+        ;;
+    mutate)
+        shift
+        mutate "$@"
+        exit $?
+        ;;
+    reconcile)
+        shift
+        reconcile "$@"
+        exit $?
+        ;;
+    orphan)
+        shift
+        orphan "$@"
+        exit $?
+        ;;
+    deps)
+        shift
+        deps "$@"
+        exit $?
+        ;;
+    sync)
+        shift
+        lambda_sync "$@"
+        exit $?
+        ;;
+    update)
+        shift
+        lambda_update "$@"
+        exit $?
+        ;;
+    info)
+        shift
+        info "$@"
+        exit $?
+        ;;
+    *)
+        help
+        exit 1
+        ;;
+esac
