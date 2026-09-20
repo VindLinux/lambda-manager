@@ -1,0 +1,7 @@
+# per-package compile attribute overrides
+# one line per package, overrides take precedence over the global COMP_ATTRS in make.conf
+#
+# format: <package> <attr> [-attr ...]
+#
+# example:
+# vim -python lua
