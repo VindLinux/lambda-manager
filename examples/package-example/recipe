@@ -1,0 +1,63 @@
+# packages/<name>/recipe
+#
+# One file with the phases of a package, each one a shell function:
+#
+#   pkg_download   fetch and extract/clone the source            (required)
+#   pkg_build      configure and compile                         (optional, default: nothing)
+#   pkg_install    install into $DESTDIR                         (required)
+#   pkg_strip      strip debug symbols                           (optional, default: strips ELF files)
+#
+# The phases are named pkg_* on purpose: a function called `install` would shadow coreutils'
+# `install`, and pkg_install would recurse into itself as soon as it called `install -D`.
+#
+# Every phase runs in its own `sh`, starting inside the staging directory, so nothing carries
+# over from one phase to the next (cd into the source in each one). The file itself is sourced
+# by every phase, so variables defined at the top are shared.
+#
+# Available to the recipe:
+#   DESTDIR       staging root, install everything below it
+#   PREFIX, MAKEOPTS, CFLAGS, ...   from /etc/lambda/make.conf
+#   COMP_ATTRS    effective attributes of this package, e.g. "-python lua -clipboard"
+#   PKG_NAME, PKG_VERSION
+#   attr_on <attr>   true if the attribute is enabled. Don't use `grep -w` on COMP_ATTRS:
+#                    it finds "python" inside "-python".
+
+src="hello-1.0"
+
+pkg_download()
+{
+    # a real recipe would fetch a tarball or clone a repository here
+    mkdir "$src"
+    printf '#!/bin/sh\necho hello\n' > "$src/hello"
+}
+
+pkg_build()
+{
+    cd "$src" || exit 1
+
+    color_flag="--disable-color"
+    if attr_on color; then
+        color_flag="--enable-color"
+    fi
+
+    shout_flag="--disable-shout"
+    if attr_on shout; then
+        shout_flag="--enable-shout"
+    fi
+
+    # flags options can variate from each ./configure
+
+    # ./configure --prefix="$PREFIX" $color_flag $shout_flag
+    # make $MAKEOPTS
+}
+
+pkg_install()
+{
+    cd "$src" || exit 1
+
+    # make DESTDIR="$DESTDIR" install
+    install -Dm755 hello "$DESTDIR$PREFIX/bin/hello"
+
+    # files under /etc are never overwritten on upgrade/rebuild (see .lambda-new)
+    # and never removed with the package
+}

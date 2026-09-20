@@ -1,0 +1,8 @@
+# one dependency per line
+#
+#   pkg          unconditional dependency (installed ever)
+#   flag?pkg     conditional dependency (installed only if flag is true)
+#
+# e.g:
+# zlib
+# color?ncurses
