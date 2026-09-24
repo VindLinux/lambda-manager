@@ -4,6 +4,7 @@
 . /usr/lib/lambda/install.sh
 . /usr/lib/lambda/remove.sh
 . /usr/lib/lambda/mutate.sh
+. /usr/lib/lambda/force-remove.sh
 . /usr/lib/lambda/deps.sh
 . /usr/lib/lambda/orphan.sh
 . /usr/lib/lambda/reconcile.sh
@@ -21,7 +22,8 @@ help()
     echo "Commands:"
     echo "    mutate append <package>    Add a package to the desired system"
     echo "    mutate purge <package>     Remove a package from the desired system"
-    echo
+		echo "    force-remove <package>     Force-remove installed packages, even if others depend on them"
+		echo 
     echo "    deps <package>             Show the dependency tree and the install order"
     echo "    info <package>             Show package information"
     echo
@@ -69,7 +71,12 @@ case "$1" in
         mutate "$@"
         exit $?
         ;;
-    reconcile)
+    force-remove)
+        shift
+        force_remove "$@"
+        exit $?
+        ;;
+		reconcile)
         shift
         reconcile "$@"
         exit $?
