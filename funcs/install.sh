@@ -10,6 +10,7 @@ _run_phase()
     (
         cd "$3" || exit 1
         exec env "COMP_ATTRS=$5" "DESTDIR=$4" "PKG_NAME=$1" "PKG_VERSION=$6" \
+            "PKG_SOURCES=$PKG_DB/$1/sources" \
             sh -c '. /usr/lib/lambda/recipe-env.sh
                    . "$1"
                    if ! command -v "$2" >/dev/null 2>&1; then
