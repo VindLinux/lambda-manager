@@ -32,7 +32,8 @@ pkg_strip()
 # $1 = output file
 fetch_source()
 {
-    local out="$1" url="" list=""
+    local out="$1" url="" list="" v="$PKG_VERSION"
+    local major="" major_minor="" under="" nodots=""
 
     if [ -z "$out" ]; then
         echo "lambda: fetch_source needs an output file" >&2
@@ -44,9 +45,18 @@ fetch_source()
         return 1
     fi
 
-    # drop comment lines and blank lines, expand ${PKG_VERSION}
+    major="${v%%.*}"
+    major_minor=$(printf '%s' "$v" | cut -d. -f1,2)
+    under=$(printf '%s' "$v" | tr . _)
+    nodots=$(printf '%s' "$v" | tr -d .)
+
+    # drop comments/blank lines, expand ${PKG_VERSION} and its derived forms
     list=$(sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' \
-               -e "s|\${PKG_VERSION}|$PKG_VERSION|g" "$PKG_SOURCES")
+               -e "s|\${PKG_VERSION_MAJOR_MINOR}|$major_minor|g" \
+               -e "s|\${PKG_VERSION_MAJOR}|$major|g" \
+               -e "s|\${PKG_VERSION_UNDERSCORE}|$under|g" \
+               -e "s|\${PKG_VERSION_NODOTS}|$nodots|g" \
+               -e "s|\${PKG_VERSION}|$v|g" "$PKG_SOURCES")
 
     while read -r url; do
         echo "lambda: downloading $url"
